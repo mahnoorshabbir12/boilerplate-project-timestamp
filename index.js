@@ -4,6 +4,25 @@
 // init project
 var express = require('express');
 var app = express();
+app.post("/api/:date?", function (req, res) {
+  var date = req.params.date;
+  if (!date) {
+    date = new Date();
+  } else if (/^\d+$/.test(date)) {
+    date = new Date(parseInt(date));
+  } else {
+    date = new Date(date);
+  }
+
+  if (isNaN(date.getTime())) {
+    return res.json({ error: "Invalid Date" });
+  }
+
+  res.json({
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  });
+});
 
 // enable CORS (https://en.wikipedia.org/wiki/Cross-origin_resource_sharing)
 // so that your API is remotely testable by FCC 
