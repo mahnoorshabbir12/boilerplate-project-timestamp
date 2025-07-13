@@ -1,51 +1,54 @@
-// index.js
-// where your node app starts
-
 var express = require('express');
 var cors = require('cors');
 var app = express();
 
-// enable CORS so that your API is remotely testable by FCC 
+// Enable CORS
 app.use(cors({ optionsSuccessStatus: 200 }));
 
-// serve static files
+// Serve static files
 app.use(express.static('public'));
 
-// homepage route
-app.get("/", function (req, res) {
-  res.sendFile(__dirname + '/views/index.html');
+// Home page
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/index.html");
 });
 
-// hello test endpoint
-app.get("/api/hello", function (req, res) {
-  res.json({ greeting: 'hello API' });
+// Hello test endpoint
+app.get("/api/hello", (req, res) => {
+  res.json({ greeting: "hello API" });
 });
 
-// timestamp endpoint
-app.get("/api/:date?", function (req, res) {
-  let dateString = req.params.date;
+// Timestamp API
+app.get("/api/:date?", (req, res) => {
+  const dateParam = req.params.date;
   let date;
 
-  if (!dateString) {
+  // Handle no date provided
+  if (!dateParam) {
     date = new Date();
-  } else if (!isNaN(dateString)) {
-    // Handle Unix timestamp in milliseconds
-    date = new Date(Number(dateString));
-  } else {
-    date = new Date(dateString);
+  } 
+  // Handle numeric timestamp
+  else if (!isNaN(dateParam) && /^\d+$/.test(dateParam)) {
+    date = new Date(parseInt(dateParam));
+  } 
+  // Handle ISO date string
+  else {
+    date = new Date(dateParam);
   }
 
+  // Handle invalid dates
   if (date.toString() === "Invalid Date") {
     return res.json({ error: "Invalid Date" });
   }
 
+  // Success response
   res.json({
     unix: date.getTime(),
-    utc: date.toUTCString()
+    utc: date.toUTCString(),
   });
 });
 
-// start server
-var listener = app.listen(process.env.PORT || 3000, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
+// Start the server
+var listener = app.listen(process.env.PORT || 3000, () => {
+  console.log("Your app is listening on port " + listener.address().port);
 });
