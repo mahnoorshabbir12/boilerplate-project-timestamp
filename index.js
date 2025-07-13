@@ -4,7 +4,7 @@
 // init project
 var express = require('express');
 var app = express();
-app.post("/api/:date?", function (req, res) {
+app.get("/api/:date?", function (req, res) {
   var date = req.params.date;
   if (!date) {
     date = new Date();
